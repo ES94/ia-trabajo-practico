@@ -39,7 +39,7 @@ class RescatePersonas(SearchProblem):
     def actions(self, estado):
         acciones_disponibles = []
         for i in MOVIMIENTOS:
-            if (is_valid(estado,i)) == True:
+            if (is_valid(estado,i) == True):
                 acciones_disponibles.append(i)                
         return tuple(acciones_disponibles)
 
