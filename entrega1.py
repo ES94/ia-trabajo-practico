@@ -27,7 +27,7 @@ class RescatePersonas(SearchProblem):
         pos_x, pos_y = estado[0][0], estado[0][1]
         pisados = estado[1]
         pos_x_new = pos_x + accion[0]
-        pos_y_new = pos_Y + accion[1]        
+        pos_y_new = pos_y + accion[1]        
         if (pos_x_new > 5 or pos_x_new < 0):
             return False
         if (pos_y_new > 5 or pos_y_new < 0):
@@ -41,7 +41,7 @@ class RescatePersonas(SearchProblem):
         for i in MOVIMIENTOS:
             if (is_valid(estado,i)) == True:
                 acciones_disponibles.append(i)                
-        return acciones_disponibles
+        return tuple(acciones_disponibles)
 
     def result(self, estado, accion):
         pos_x = estado[0][0] + accion[0]
@@ -49,7 +49,11 @@ class RescatePersonas(SearchProblem):
         pisados = estado[1]
         pos_personas = estado[2]
         ocupado = estado[3]
-        for persona in range(0, len(pos_personas)):   #Rescate de personas. Cuando pisa la orilla el robot se 'desocupa', si estaba cargando a una persona.
+        for persona in range(0, len(pos_personas)):  # Rescate de personas. 
+                                                     # Cuando pisa la orilla 
+                                                     # el robot se 'desocupa',
+                                                     # si estaba cargando a 
+                                                     # una persona.
             if ((pos_x,pos_y) == pos_personas[persona]):
                 pos_personas.pop(persona)
                 if not(ocupado):
@@ -57,22 +61,34 @@ class RescatePersonas(SearchProblem):
         if ((pos_x,pos_y) in ORILLA):
             if (ocupado):
                 ocupado = False
-        if ((pos_x,pos_y) not in ORILLA): #Si el robot se mueve a un casillero 'hundible', lo agrego a pisados.
+        if ((pos_x,pos_y) not in ORILLA):  # Si el robot se mueve a un 
+                                           # casillero 'hundible', lo agrego a
+                                           # pisados.
             pisados.append((pos_x,pos_y))    
         
-        return ([(pos_x,pos,y), pisados, pos_personas, ocupado])
-
+        return ([(pos_x, pos_y), pisados, pos_personas, ocupado])
 
     def cost(self, estado1, accion, estado2):
         return 1
 
-
     def heuristic(self, estado):
-        
+        costo_heuristica = 0
+        pos_robot = list(estado[0])
+        pos_personas = tuple(estado[2])
+
+        """ Sumarizar las distancias Manhattan de las personas. """
+        for pos_per in pos_personas:
+            costo_heuristica += (abs(pos_per[0] - pos_robot[0]) + 
+                                abs(pos_per[1] - pos_robot[1]))
+            pos_robot = [pos_per[0], pos_per[1]]
+        costo_heuristica += min(pos_robot[0], pos_robot[1], 5 - pos_robot[0], 
+                                5 - pos_robot[1])  # Distancia mínima a una 
+                                                   # orilla.
+        return costo_heuristica
 
 
 class ResultadoBusqueda:
-    """Representa una salida formateada de un resultado de búsqueda."""
+    """ Representa una salida formateada de un resultado de búsqueda. """
 
     def __init__(self, numero_de_caso, cantidad_nodos_visitados, 
         profundidad_solucion, costo_solucion, largo_maximo_frontera):
@@ -91,22 +107,26 @@ class ResultadoBusqueda:
 
 
 def resolver(metodo_busqueda, posiciones_personas):
-    """Devuelve un nodo resultado, a partir de una búqueda especificada.
+    """ Devuelve un nodo resultado, a partir de una búqueda especificada.
 
     Argumentos:
     metodo_busqueda -- nombre de método a usar (string);
-    posiciones_personas -- lista de tuplas. Cada tupla representa la posicion de una persona en la grilla (aún por rescatar).
+    posiciones_personas -- lista de tuplas. Cada tupla representa la posicion 
+    de una persona en la grilla (aún por rescatar).
 
     """
         
     """
     Estado inicial: Lista compuesta de 4 posiciones:
     1era posicion: Tupla. Posicion del robot en la grilla.
-    2da posicion: Lista de tuplas. Posiciones de la grilla que el robot va hundiendo (inutilizando).
-    3era posicion: Lista de tuplas. Posiciones de la grilla donde se ubican las personas aún no rescatadas.
-    4ta posicion: Booleano. Es True si el robot esta 'ocupado' (esta cargando personas), caso contrario False.
+    2da posicion: Lista de tuplas. Posiciones de la grilla que el robot va 
+    hundiendo (inutilizando).
+    3era posicion: Lista de tuplas. Posiciones de la grilla donde se ubican 
+    las personas aún no rescatadas.
+    4ta posicion: Booleano. Es True si el robot esta 'ocupado' (esta cargando 
+    personas), caso contrario False.
     """
-    ESTADO_INICIAL = [(0,0) , [] , posiciones_Personas , False]
+    ESTADO_INICIAL = [(0,0) , [] , posiciones_personas , False]
     problema = RescatePersonas(ESTADO_INICIAL)
 
     if metodo_busqueda == 'astar':
@@ -123,11 +143,14 @@ def resolver(metodo_busqueda, posiciones_personas):
     if metodo_busqueda == 'greedy':
         return greedy(problema, graph_search=True, viewer=ConsoleViewer())
 
-def Nodos_Visitados():
+
+def nodos_visitados():
     pass
 
-def Largo_Max_Frontera():
+
+def largo_max_frontera():
     pass
+
 
 if __name__ == "__main__":
     for i in range(5):
