@@ -71,12 +71,13 @@ class RescatePersonas(SearchProblem):
     def cost(self, estado1, accion, estado2):
         return 1
 
+    """
     def heuristic(self, estado):
         costo_heuristica = 0
         pos_robot = list(estado[0])
         pos_personas = tuple(estado[2])
 
-        """ Sumarizar las distancias Manhattan de las personas. """
+        # Sumarizar las distancias Manhattan de las personas.
         for pos_per in pos_personas:
             costo_heuristica += (abs(pos_per[0] - pos_robot[0]) + 
                                 abs(pos_per[1] - pos_robot[1]))
@@ -84,6 +85,17 @@ class RescatePersonas(SearchProblem):
         costo_heuristica += min(pos_robot[0], pos_robot[1], 5 - pos_robot[0], 
                                 5 - pos_robot[1])  # Distancia mínima a una 
                                                    # orilla.
+        return costo_heuristica
+    """
+
+    def heuristic(self, estado):
+        costo_heuristica = 0
+        pos_personas = tuple(estado[2])
+
+        """ Sumarizar las distancias Manhattan de las personas. """
+        for pos_per in pos_personas:
+            costo_heuristica += max(pos_per[0], pos_per[1], 
+                                5 - pos_per[0], 5 - pos_per[1])
         return costo_heuristica
 
 
@@ -123,14 +135,6 @@ def resolver(metodo_busqueda, posiciones_personas):
         return greedy(problema, graph_search=True)
 
 
-def nodos_visitados():
-    pass
-
-
-def largo_max_frontera():
-    pass
-
-
 if __name__ == "__main__":
     for i in range(5):
         """Como máximo pueden haber 16 personas en la grilla"""
@@ -142,11 +146,10 @@ if __name__ == "__main__":
             Pos_x, Pos_y = random.randint(1,4) , random.randint(1,4)
             if ((Pos_x,Pos_y) not in Pos_Personas):        
                 Pos_Personas.append((Pos_x,Pos_y))
+        personas_pos = tuple(Pos_Personas)
                 
         r = resolver('astar', Pos_Personas)
-        resultado_busqueda = ResultadoBusqueda(i, cantidad_nodos_visitados, 
-                                r.depth, r.cost, largo_maximo_frontera)
-        print(resultado_busqueda)
+        print(r)
 
     for i in range(5):
         """Como máximo pueden haber 16 personas en la grilla"""
@@ -160,9 +163,7 @@ if __name__ == "__main__":
                 Pos_Personas.append((Pos_x,Pos_y))
                  
         r = resolver('depth_first', Pos_Personas)
-        resultado_busqueda = ResultadoBusqueda(i, cantidad_nodos_visitados, 
-                                r.depth, r.cost, largo_maximo_frontera)
-        print(resultado_busqueda)
+        print(r)
     
     for i in range(5):
         """Como máximo pueden haber 16 personas en la grilla"""
@@ -176,9 +177,7 @@ if __name__ == "__main__":
                 Pos_Personas.append((Pos_x,Pos_y))
                 
         r = resolver('breadth_first', Pos_Personas)
-        resultado_busqueda = ResultadoBusqueda(i, cantidad_nodos_visitados, 
-                                r.depth, r.cost, largo_maximo_frontera)
-        print(resultado_busqueda)
+        print(r)
     
     for i in range(5):
         """Como máximo pueden haber 16 personas en la grilla"""
@@ -192,6 +191,4 @@ if __name__ == "__main__":
                 Pos_Personas.append((Pos_x,Pos_y))
                 
         r = resolver('greedy', Pos_Personas)
-        resultado_busqueda = ResultadoBusqueda(i, cantidad_nodos_visitados, 
-                                r.depth, r.cost, largo_maximo_frontera)
-        print(resultado_busqueda)
+        print(r)
