@@ -3,7 +3,7 @@ from simpleai.search import (SearchProblem, astar, depth_first, breadth_first,
 from simpleai.search.viewers import (ConsoleViewer, WebViewer, BaseViewer)
 import random
 
-MOVIMIENTOS = [(1,0),(-1,0),(0,1),(0,-1)]
+MOVIMIENTOS = ((1,0),(-1,0),(0,1),(0,-1))
 ORILLA = []
 for j in range(6):              #Se cargan las posiciones 'orillas'
     ORILLA.append((0,j))
@@ -92,11 +92,12 @@ class RescatePersonas(SearchProblem):
         costo_heuristica = 0
         pos_personas = tuple(estado[2])
 
-        """ Sumarizar las distancias Manhattan de las personas. """
+        # Sumarizar las distancias Manhattan de las personas.
         for pos_per in pos_personas:
             costo_heuristica += max(pos_per[0], pos_per[1], 
                                 5 - pos_per[0], 5 - pos_per[1])
         return costo_heuristica
+    
 
 
 def resolver(metodo_busqueda, posiciones_personas):
@@ -148,7 +149,7 @@ if __name__ == "__main__":
                 Pos_Personas.append((Pos_x,Pos_y))
         personas_pos = tuple(Pos_Personas)
                 
-        r = resolver('astar', Pos_Personas)
+        r = resolver('astar', personas_pos)
         print(r)
 
     for i in range(5):
@@ -161,8 +162,9 @@ if __name__ == "__main__":
             Pos_x, Pos_y = random.randint(1,4) , random.randint(1,4)
             if ((Pos_x,Pos_y) not in Pos_Personas):        
                 Pos_Personas.append((Pos_x,Pos_y))
+        personas_pos = tuple(Pos_Personas)
                  
-        r = resolver('depth_first', Pos_Personas)
+        r = resolver('depth_first', personas_pos)
         print(r)
     
     for i in range(5):
@@ -175,8 +177,9 @@ if __name__ == "__main__":
             Pos_x, Pos_y = random.randint(1,4) , random.randint(1,4)
             if ((Pos_x,Pos_y) not in Pos_Personas):        
                 Pos_Personas.append((Pos_x,Pos_y))
+        personas_pos = tuple(Pos_Personas)
                 
-        r = resolver('breadth_first', Pos_Personas)
+        r = resolver('breadth_first', personas_pos)
         print(r)
     
     for i in range(5):
@@ -189,6 +192,7 @@ if __name__ == "__main__":
             Pos_x, Pos_y = random.randint(1,4) , random.randint(1,4)
             if ((Pos_x,Pos_y) not in Pos_Personas):        
                 Pos_Personas.append((Pos_x,Pos_y))
+        personas_pos = tuple(Pos_Personas)
                 
-        r = resolver('greedy', Pos_Personas)
+        r = resolver('greedy', personas_pos)
         print(r)
