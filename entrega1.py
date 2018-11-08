@@ -99,6 +99,9 @@ class RescatePersonas(SearchProblem):
                                 5 - pos_per[0], 5 - pos_per[1])
         return costo_heuristica
     """
+    
+    
+    """
     def heuristic(self, estado):  #Sumatoria de distancia de robot a persona y de esa persona a la orilla mas cercana.
         costos_heuristica = []
         pos_personas = tuple(estado[2])
@@ -110,6 +113,7 @@ class RescatePersonas(SearchProblem):
             
             distanciaXY = distanciaX + distanciaY
             mas_cercanas = []
+            
             for i in ORILLA:
                 pos_orilla_x = i[0]
                 pos_orilla_y = i[1]
@@ -118,9 +122,23 @@ class RescatePersonas(SearchProblem):
 
             costos_heuristica.append(min(mas_cercanas) + distanciaXY)  #guardo el costo de distancia desde la persona a la orilla mas cercana + la distancia del robot a la persona
 
-        return (max(costos_heuristica))     
-                
-    
+        return (max(costos_heuristica))
+    """     
+
+    def heuristic(self, estado):  #Sumatoria de distancia de robot a persona y de esa persona a la orilla mas cercana.
+        costos_heuristica = []
+        pos_personas = tuple(estado[2])
+        pos_robot = list(estado[0])
+
+        for pos_per in pos_personas:
+            distanciaX = abs(pos_robot[0] - pos_per[0])
+            distanciaY = abs(pos_robot[1] - pos_per[1]) 
+            distanciaXY = distanciaX + distanciaY
+            mas_cercanas = [pos_per[0], pos_per[1], 5 - pos_per[0], 
+                                5 - pos_per[1]]
+            costos_heuristica.append(min(mas_cercanas) + distanciaXY)  #guardo el costo de distancia desde la persona a la orilla mas cercana + la distancia del robot a la persona
+
+        return (max(costos_heuristica))
 
 
 def resolver(metodo_busqueda, posiciones_personas):
