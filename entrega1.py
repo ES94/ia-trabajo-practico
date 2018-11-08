@@ -14,7 +14,7 @@ for i in range(6):
 for i in range(6):
     ORILLA.append((i,5))
 
-# INICIAL = [(0,0) , [] , posiciones_Personas , False]
+# INICIAL = ((0,0) , [] , posiciones_Personas , False)
 
 class RescatePersonas(SearchProblem):
     def is_goal(self, estado):
@@ -111,9 +111,12 @@ class RescatePersonas(SearchProblem):
             distanciaXY = distanciaX + distanciaY
             mas_cercanas = []
             for i in ORILLA:
-                mas_cercanas.append(abs(distanciaXY - i))
+                pos_orilla_x = i[0]
+                pos_orilla_y = i[1]
+                pos_orilla = pos_orilla_x + pos_orilla_y
+                mas_cercanas.append(abs(distanciaXY - pos_orilla))
 
-            costos_heuristica.append[min(mas_cercanas) + distanciaXY)]  #guardo el costo de distancia desde la persona a la orilla mas cercana + la distancia del robot a la persona
+            costos_heuristica.append(min(mas_cercanas) + distanciaXY)  #guardo el costo de distancia desde la persona a la orilla mas cercana + la distancia del robot a la persona
 
         return (max(costos_heuristica))     
                 
@@ -140,79 +143,29 @@ def resolver(metodo_busqueda, posiciones_personas):
     4ta posicion: Booleano. Es True si el robot esta 'ocupado' (esta cargando 
     personas), caso contrario False.
     """
+    visor = BaseViewer()
     ESTADO_INICIAL = ((0,0) , (), posiciones_personas , False)
     problema = RescatePersonas(ESTADO_INICIAL)
 
     if metodo_busqueda == 'astar':
-        return astar(problema, graph_search=True)
+        result = astar(problema, graph_search=True, viewer=visor)
     
     if metodo_busqueda == 'depth_first':
-        return depth_first(problema, graph_search=True)
+        result = depth_first(problema, graph_search=True, viewer=visor)
     
     if metodo_busqueda == 'breadth_first':
-        return breadth_first(problema, graph_search=True)
+        result = breadth_first(problema, graph_search=True, viewer=visor)
 
     if metodo_busqueda == 'greedy':
-        return greedy(problema, graph_search=True)
+        result = greedy(problema, graph_search=True, viewer=visor)
 
 
 if __name__ == "__main__":
-    for i in range(5):
-        """Como máximo pueden haber 16 personas en la grilla"""
-        Personas = random.randint(1,16) #Numero aleatorio de personas a rescatar.
-
-        """Las posiciones de las personas son aleatorias"""
-        Pos_Personas = []
-        while (Personas != len(Pos_Personas)): #Carga de posiciones de personas aleatoriamente.
-            Pos_x, Pos_y = random.randint(1,4) , random.randint(1,4)
-            if ((Pos_x,Pos_y) not in Pos_Personas):        
-                Pos_Personas.append((Pos_x,Pos_y))
-        personas_pos = tuple(Pos_Personas)
-                
-        r = resolver('astar', personas_pos)
-        print(r)
-
-    for i in range(5):
-        """Como máximo pueden haber 16 personas en la grilla"""
-        Personas = random.randint(1,16) #Numero aleatorio de personas a rescatar.
-
-        """Las posiciones de las personas son aleatorias"""
-        Pos_Personas = []
-        while (Personas != len(Pos_Personas)): #Carga de posiciones de personas aleatoriamente.
-            Pos_x, Pos_y = random.randint(1,4) , random.randint(1,4)
-            if ((Pos_x,Pos_y) not in Pos_Personas):        
-                Pos_Personas.append((Pos_x,Pos_y))
-        personas_pos = tuple(Pos_Personas)
-                 
-        r = resolver('depth_first', personas_pos)
-        print(r)
-    
-    for i in range(5):
-        """Como máximo pueden haber 16 personas en la grilla"""
-        Personas = random.randint(1,16) #Numero aleatorio de personas a rescatar.
-
-        """Las posiciones de las personas son aleatorias"""
-        Pos_Personas = []
-        while (Personas != len(Pos_Personas)): #Carga de posiciones de personas aleatoriamente.
-            Pos_x, Pos_y = random.randint(1,4) , random.randint(1,4)
-            if ((Pos_x,Pos_y) not in Pos_Personas):        
-                Pos_Personas.append((Pos_x,Pos_y))
-        personas_pos = tuple(Pos_Personas)
-                
-        r = resolver('breadth_first', personas_pos)
-        print(r)
-    
-    for i in range(5):
-        """Como máximo pueden haber 16 personas en la grilla"""
-        Personas = random.randint(1,16) #Numero aleatorio de personas a rescatar.
-
-        """Las posiciones de las personas son aleatorias"""
-        Pos_Personas = []
-        while (Personas != len(Pos_Personas)): #Carga de posiciones de personas aleatoriamente.
-            Pos_x, Pos_y = random.randint(1,4) , random.randint(1,4)
-            if ((Pos_x,Pos_y) not in Pos_Personas):        
-                Pos_Personas.append((Pos_x,Pos_y))
-        personas_pos = tuple(Pos_Personas)
-                
-        r = resolver('greedy', personas_pos)
-        print(r)
+    my_viewer = BaseViewer()
+    ESTADO_INICIAL = ((0,0) , (), ((2, 1), (3, 4), (4, 2)) , False)
+    problema = RescatePersonas(ESTADO_INICIAL)
+    result = breadth_first(problema, graph_search=True, viewer=my_viewer)
+    print("Stats: ",my_viewer.stats)
+    print("Solucion: ",result.state)
+    print("profundidad_solucion: ",len(result.path()))
+    print("costo_solucion:", result.cost)
